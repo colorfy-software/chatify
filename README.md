@@ -12,13 +12,17 @@
   <a href="https://github.com/colorfy-software/chatify/actions">
     <img src="https://github.com/colorfy-software/chatify/workflows/Test%20Suite/badge.svg?branch=main" alt="Current GitHub Actions build status." />
   </a>
-  <a href="https://www.npmjs.org/package/chatify">
-    <img src="https://badge.fury.io/js/chatify.svg" alt="Current npm package version." />
+  <a href="https://www.npmjs.org/package/@colorfy-software/chatify">
+    <img src="https://badge.fury.io/js/@colorfy-software%2Fchatify.svg" alt="Current npm package version." />
   </a>
   <a href="https://github.com/colorfy-software/chatify/contributing">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" />
   </a>
 </p>
+
+## 🎯 Purpose
+
+Chatify is a highly customizable library built around pleasing animations that provides a delightful chatbot experience UI/UX and DX-wise.
 
 ## 🏗️ Installation
 

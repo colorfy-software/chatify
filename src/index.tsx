@@ -1,5 +1,5 @@
 import { FlatList } from 'react-native-gesture-handler'
-import { View, StyleProp, ViewStyle } from 'react-native'
+import { View, StyleProp, ViewStyle, Platform } from 'react-native'
 import React, { memo, useCallback, useEffect, useState } from 'react'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 
@@ -24,6 +24,15 @@ interface ChatbotPropsType<K, T> {
   setChatbotHistory: (newHistoryKey: keyof K | Record<string, unknown>) => void
   onEntryWillUpdate?: ((nextEntryKey: keyof K | Record<string, unknown>) => void | Promise<void>) | undefined
 }
+
+/**
+ * A boolean indicating, whether chatbot container and the bubbles within it should use inverted FlatList (true)
+ * or be flipped manually using transform instead (false).
+ * This is a "hack" to prevent bad performance, laggy animations and app freezing when using an
+ * inverted FlatList on Android 13.
+ * @see https://github.com/facebook/react-native/issues/34583
+ */
+export const USE_INVERTED_FLATLIST = !(Platform.OS === 'android' && Platform.Version >= 33)
 
 const Chatbot = <
   K extends Record<
@@ -109,12 +118,12 @@ const Chatbot = <
   return (
     <View style={{ flex: 1 }}>
       <AnimatedFlatList
-        inverted
         data={chatbotHistory}
+        inverted={USE_INVERTED_FLATLIST}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={contentContainerStyle}
         showsVerticalScrollIndicator={false}
-        style={[{ flex: 1 }, animatedPadding]}
+        contentContainerStyle={contentContainerStyle}
+        style={[{ flex: 1 }, animatedPadding, !USE_INVERTED_FLATLIST && { transform: [{ rotate: '180deg' }] }]}
         keyExtractor={(item, index): string => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore

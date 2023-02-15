@@ -179,6 +179,7 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
   if (!isLatestSetEntry) {
     return (
       <>
+        <Animated.View style={animatedSpacerStyles} />
         <Animated.View style={[styles.row, animatedContainerStyles]}>
           {alignment === 'left' && (
             <Animated.View style={[avatarAnimatedStyles, styles.avatar, { opacity: isLastInGroup ? 1 : 0 }]} />
@@ -191,7 +192,6 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
             </Animated.View>
           </Animated.View>
         </Animated.View>
-        <Animated.View style={[animatedSpacerStyles]} />
       </>
     )
   }
@@ -200,6 +200,7 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
 
   return (
     <>
+      <Animated.View style={animatedSpacerStyles} />
       <Animated.View style={[styles.row, animatedContainerStyles]}>
         {alignment === 'left' && (
           <Animated.View style={[avatarAnimatedStyles, styles.avatar, { opacity: isLastInGroup ? 1 : 0 }]}>
@@ -230,7 +231,6 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
           </Animated.View>
         </Animated.View>
       </Animated.View>
-      <Animated.View style={[animatedSpacerStyles]} />
     </>
   )
 }

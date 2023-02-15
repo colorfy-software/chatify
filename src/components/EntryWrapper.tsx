@@ -3,6 +3,8 @@ import React, { memo, ReactElement, Component, useEffect } from 'react'
 
 import type { DefaultEntryMethodsTypeInternal } from '../types'
 
+import { USE_INVERTED_FLATLIST } from '../index'
+
 interface EntryWrapperType<T> {
   entry: T
   onRender?: DefaultEntryMethodsTypeInternal['onRender']
@@ -78,7 +80,11 @@ const EntryWrapper = <T extends Record<string, unknown>>(props: EntryWrapperType
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  return <Comp />
+  return (
+    <View style={[!USE_INVERTED_FLATLIST && { transform: [{ rotate: '180deg' }] }]}>
+      <Comp />
+    </View>
+  )
 }
 
 export default memo(EntryWrapper, (prevProps, nextProps) => {

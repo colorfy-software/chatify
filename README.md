@@ -46,8 +46,8 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 
 ## 💖 Code of Conduct
 
-This library has adopted a Code of Conduct that we expect project participants to adhere to. Please read the [full text](https://github.com/colorfy-software/chatify/blob/master/CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
+This library has adopted a Code of Conduct that we expect project participants to adhere to. Please read the [full text](https://github.com/colorfy-software/chatify/blob/main/CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
 
 ## 📰 License
 
-Chatify is licensed under the [MIT License](https://github.com/colorfy-software/chatify/blob/master/LICENSE).
+Chatify is licensed under the [MIT License](https://github.com/colorfy-software/chatify/blob/main/LICENSE).

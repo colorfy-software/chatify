@@ -15,7 +15,7 @@ interface ChatbotBubbleWrapperPropsType {
   showTypingIndicator?: boolean
   avatarImageSource: ImageSourcePropType
   typingIndicatorAnimationTimeMs?: number
-  typingIndicatorAnimation: ComponentProps<typeof LottieView>['source']
+  typingIndicatorAnimation?: ComponentProps<typeof LottieView>['source']
 }
 
 const { width: windowWidth } = Dimensions.get('window')

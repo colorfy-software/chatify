@@ -1,7 +1,7 @@
 import { createElement, View } from 'react-native'
 import React, { memo, ReactElement, Component, useEffect } from 'react'
 
-import type { DefaultEntryMethodsTypeInternal } from '../types'
+import type { ComponentExtraProps, DefaultEntryMethodsTypeInternal } from '../types'
 
 import { USE_INVERTED_FLATLIST } from '../index'
 
@@ -12,13 +12,6 @@ interface EntryWrapperType<T> {
   setNewEntry: (entry: string | Record<string, unknown>) => void
   setActiveAction: ({ key, actionProps }: { key: string; actionProps: Record<string, unknown> }) => void
   removeAction: () => void
-  isLast: boolean
-  isLatestSetEntry: boolean
-  isLatestPersistedEntry: boolean | null
-  isLastEntryRendered: boolean
-  isInMiddleOfTheGroup: boolean
-  isLastInGroup: boolean
-  isFirstInGroup: boolean
   children:
     | ReactElement<
         T,
@@ -31,7 +24,9 @@ interface EntryWrapperType<T> {
     | undefined
 }
 
-const EntryWrapper = <T extends Record<string, unknown>>(props: EntryWrapperType<T>): JSX.Element => {
+const EntryWrapper = <T extends Record<string, unknown>>(
+  props: EntryWrapperType<T> & Required<ComponentExtraProps>,
+): JSX.Element => {
   const {
     children,
     testID,

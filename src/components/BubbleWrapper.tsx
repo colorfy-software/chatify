@@ -1,5 +1,5 @@
 import LottieView from 'lottie-react-native'
-import React, { PropsWithChildren, useEffect, useRef, useState } from 'react'
+import React, { ComponentProps, PropsWithChildren, useEffect, useRef, useState } from 'react'
 import { Image, ImageSourcePropType, View, StyleSheet, LayoutChangeEvent, Dimensions } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
 
@@ -15,6 +15,7 @@ interface ChatbotBubbleWrapperPropsType {
   showTypingIndicator?: boolean
   avatarImageSource: ImageSourcePropType
   typingIndicatorAnimationTimeMs?: number
+  typingIndicatorAnimation: ComponentProps<typeof LottieView>['source']
 }
 
 const { width: windowWidth } = Dimensions.get('window')
@@ -33,6 +34,7 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
     isInMiddleOfTheGroup,
     showTypingIndicator = false,
     typingIndicatorAnimationTimeMs = 500,
+    typingIndicatorAnimation = require('../helpers/lottie-typing-indicator.json'),
   } = props
   const lottieRef = useRef<LottieView>(null)
 
@@ -217,7 +219,7 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
                 loop
                 speed={-0.85}
                 style={styles.lottieView}
-                source={require('../helpers/lottie-typing-indicator.json')}
+                source={typingIndicatorAnimation}
               />
             </Animated.View>
           )}

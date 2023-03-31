@@ -8,6 +8,7 @@ import type { ComponentExtraProps } from '../types'
 import { DEFAULT_SPRING_CONFIG } from '../helpers'
 
 interface ChatbotBubbleWrapperPropsType {
+  testID?: string
   borderRadius?: number
   backgroundColor: string
   alignment?: 'left' | 'right'
@@ -20,6 +21,7 @@ const { width: windowWidth } = Dimensions.get('window')
 
 const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> & ComponentExtraProps): JSX.Element => {
   const {
+    testID,
     children,
     borderRadius,
     isLastInGroup,
@@ -201,7 +203,7 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
   return (
     <>
       <Animated.View style={animatedSpacerStyles} />
-      <Animated.View style={[styles.row, animatedContainerStyles]}>
+      <Animated.View testID={testID} style={[styles.row, animatedContainerStyles]}>
         {alignment === 'left' && (
           <Animated.View style={[avatarAnimatedStyles, styles.avatar, { opacity: isLastInGroup ? 1 : 0 }]}>
             <Image source={avatarImageSource} style={styles.avatarImage} />

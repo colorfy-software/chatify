@@ -5,6 +5,7 @@ import React, { memo, ReactElement, Component, useState, cloneElement } from 're
 import type { DEFAULT_SPRING_CONFIG } from '../helpers'
 
 interface ChatbotActionWrapper<K extends string, T extends Record<string, unknown>> {
+  testID?: string
   componentKey: K
   componentProps: T
   springConfig: typeof DEFAULT_SPRING_CONFIG
@@ -22,6 +23,7 @@ interface ChatbotActionWrapper<K extends string, T extends Record<string, unknow
 }
 
 const ActionWrapper = <K extends string, T extends Record<string, unknown>>({
+  testID,
   children,
   onHeight,
   springConfig,
@@ -50,6 +52,7 @@ const ActionWrapper = <K extends string, T extends Record<string, unknown>>({
 
   return (
     <Animated.View
+      testID={testID}
       exiting={exiting}
       style={styles.container}
       needsOffscreenAlphaCompositing={Platform.OS === 'android'}

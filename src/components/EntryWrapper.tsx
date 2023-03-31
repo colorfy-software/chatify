@@ -7,6 +7,7 @@ import { USE_INVERTED_FLATLIST } from '../index'
 
 interface EntryWrapperType<T> {
   entry: T
+  testID?: string
   onRender?: DefaultEntryMethodsTypeInternal['onRender']
   setNewEntry: (entry: string | Record<string, unknown>) => void
   setActiveAction: ({ key, actionProps }: { key: string; actionProps: Record<string, unknown> }) => void
@@ -33,6 +34,7 @@ interface EntryWrapperType<T> {
 const EntryWrapper = <T extends Record<string, unknown>>(props: EntryWrapperType<T>): JSX.Element => {
   const {
     children,
+    testID,
     entry,
     onRender,
     setActiveAction,
@@ -81,7 +83,7 @@ const EntryWrapper = <T extends Record<string, unknown>>(props: EntryWrapperType
   }, [])
 
   return (
-    <View style={[!USE_INVERTED_FLATLIST && { transform: [{ rotate: '180deg' }] }]}>
+    <View testID={testID} style={[!USE_INVERTED_FLATLIST && { transform: [{ rotate: '180deg' }] }]}>
       <Comp />
     </View>
   )

@@ -1,5 +1,5 @@
-import { createElement, Platform, StyleSheet, View } from 'react-native'
 import Animated, { withSpring } from 'react-native-reanimated'
+import { createElement, Platform, StyleSheet, View } from 'react-native'
 import React, { memo, ReactElement, Component, useState, cloneElement } from 'react'
 
 import type { DEFAULT_SPRING_CONFIG } from '../helpers'
@@ -67,13 +67,16 @@ const ActionWrapper = <K extends string, T extends Record<string, unknown>>({
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
+    position: 'absolute',
   },
 })
 
-const propsAreEqual = () => true
+const propsAreEqual = <K extends string, T extends Record<string, unknown>>(
+  prevProps: ChatbotActionWrapper<K, T>,
+  newProps: ChatbotActionWrapper<K, T>,
+) => Object.is(prevProps.componentProps, newProps.componentProps)
 
 export default memo(ActionWrapper, propsAreEqual) as typeof ActionWrapper

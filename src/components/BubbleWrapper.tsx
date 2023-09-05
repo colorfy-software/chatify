@@ -1,6 +1,6 @@
 import LottieView from 'lottie-react-native'
 import React, { ComponentProps, PropsWithChildren, useEffect, useRef, useState } from 'react'
-import { Image, ImageSourcePropType, View, StyleSheet, LayoutChangeEvent, Dimensions } from 'react-native'
+import { Image, ImageSourcePropType, View, StyleSheet, LayoutChangeEvent, Dimensions, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
 
 import type { ComponentExtraProps } from '../types'
@@ -13,6 +13,9 @@ interface ChatbotBubbleWrapperPropsType {
   backgroundColor: string
   alignment?: 'left' | 'right'
   showTypingIndicator?: boolean
+  bubbleWrapperStyles?: ViewStyle
+  contentWrapperStyles?: ViewStyle
+  contentContainerStyles?: ViewStyle
   avatarImageSource: ImageSourcePropType
   typingIndicatorAnimationTimeMs?: number
   typingIndicatorAnimation?: ComponentProps<typeof LottieView>['source']
@@ -31,7 +34,10 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
     isLatestSetEntry,
     avatarImageSource,
     alignment = 'left',
+    bubbleWrapperStyles,
+    contentWrapperStyles,
     isInMiddleOfTheGroup,
+    contentContainerStyles,
     showTypingIndicator = false,
     typingIndicatorAnimationTimeMs = 500,
     typingIndicatorAnimation = require('../helpers/lottie-typing-indicator.json'),
@@ -190,7 +196,7 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
           )}
           <Animated.View style={[borderStyles, bubbleStyles, styles.extraBubbleStyles]}>
             <Animated.View style={styles.staticContainer}>
-              <View style={styles.childRow} onLayout={onBubbleContentLayout}>
+              <View style={styles.container} onLayout={onBubbleContentLayout}>
                 {children}
               </View>
             </Animated.View>
@@ -211,7 +217,14 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
             <Image source={avatarImageSource} style={styles.avatarImage} />
           </Animated.View>
         )}
-        <Animated.View style={[borderStyles, bubbleStyles, animatedTextWrapperStyles, styles.extraBubbleStyles]}>
+        <Animated.View
+          style={[
+            borderStyles,
+            bubbleStyles,
+            animatedTextWrapperStyles,
+            styles.extraBubbleStyles,
+            bubbleWrapperStyles,
+          ]}>
           {alignment === 'left' && (
             <Animated.View style={[styles.lottieContainer, animatedLottieStyles]} pointerEvents="none">
               <LottieView
@@ -225,11 +238,12 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
           )}
           <Animated.View
             style={[
-              styles.container,
+              styles.wrapper,
               { width: alignment === 'left' ? windowWidth - 32 - 60 : windowWidth - 32 },
               animatedTextBubbleStyles,
+              contentWrapperStyles,
             ]}>
-            <View style={styles.childRow} onLayout={onBubbleContentLayout}>
+            <View style={[styles.container, contentContainerStyles]} onLayout={onBubbleContentLayout}>
               {children}
             </View>
           </Animated.View>
@@ -256,7 +270,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: 'white',
   },
-  childRow: {
+  container: {
     alignSelf: 'flex-start',
   },
   extraBubbleStyles: {
@@ -293,7 +307,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     justifyContent: 'center',
   },
-  container: {
+  wrapper: {
     top: 0,
     left: 0,
     margin: 0,

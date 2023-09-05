@@ -1,6 +1,6 @@
 {
   "name": "@colorfy-software/chatify",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Delightful chatbot library for React Native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

@@ -1,5 +1,5 @@
-import { createElement, View } from 'react-native'
-import React, { memo, ReactElement, Component, useEffect } from 'react'
+import { View } from 'react-native'
+import React, { cloneElement, createElement, memo, ReactElement, Component, useEffect } from 'react'
 
 import type { ComponentExtraProps, DefaultEntryMethodsTypeInternal } from '../types'
 
@@ -18,7 +18,10 @@ interface EntryWrapperType<T> {
         | string
         | ((
             props: unknown,
-          ) => ReactElement<unknown, string | (new (props: unknown) => Component<unknown, unknown, unknown>)> | null)
+          ) => ReactElement<
+            unknown,
+            string | (new (entryProps: unknown) => Component<unknown, unknown, unknown>)
+          > | null)
         | (new (props: unknown) => Component<unknown>)
       >
     | undefined
@@ -42,19 +45,6 @@ const EntryWrapper = <T extends Record<string, unknown>>(
     isLastInGroup,
     isFirstInGroup,
   } = props
-  const Comp = (): JSX.Element =>
-    children
-      ? React.cloneElement(children, {
-          ...entry,
-          isInMiddleOfTheGroup,
-          isLastInGroup,
-          isFirstInGroup,
-          isLast,
-          isLatestSetEntry,
-          isLatestPersistedEntry,
-          key: entry.id,
-        })
-      : createElement(View)
 
   useEffect(() => {
     onRender &&
@@ -79,7 +69,18 @@ const EntryWrapper = <T extends Record<string, unknown>>(
 
   return (
     <View testID={testID} style={[!USE_INVERTED_FLATLIST && { transform: [{ rotate: '180deg' }] }]}>
-      <Comp />
+      {children
+        ? cloneElement(children, {
+            ...entry,
+            isInMiddleOfTheGroup,
+            isLastInGroup,
+            isFirstInGroup,
+            isLast,
+            isLatestSetEntry,
+            isLatestPersistedEntry,
+            key: entry.id,
+          })
+        : createElement(View)}
     </View>
   )
 }

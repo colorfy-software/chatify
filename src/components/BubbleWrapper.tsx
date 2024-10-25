@@ -1,7 +1,6 @@
-import LottieView from 'lottie-react-native'
-import React, { ComponentProps, PropsWithChildren, useEffect, useRef, useState } from 'react'
-import { Image, ImageSourcePropType, View, StyleSheet, LayoutChangeEvent, Dimensions, ViewStyle } from 'react-native'
+import React, { PropsWithChildren, ReactNode, useEffect, useState } from 'react'
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
+import { Image, ImageSourcePropType, View, StyleSheet, LayoutChangeEvent, Dimensions, ViewStyle } from 'react-native'
 
 import type { ComponentExtraProps } from '../types'
 
@@ -11,14 +10,14 @@ interface ChatbotBubbleWrapperPropsType {
   testID?: string
   borderRadius?: number
   backgroundColor: string
+  typingIndicator?: ReactNode
   alignment?: 'left' | 'right'
   showTypingIndicator?: boolean
   bubbleWrapperStyles?: ViewStyle
   contentWrapperStyles?: ViewStyle
   contentContainerStyles?: ViewStyle
   avatarImageSource: ImageSourcePropType
-  typingIndicatorAnimationTimeMs?: number
-  typingIndicatorAnimation?: ComponentProps<typeof LottieView>['source']
+  typingIndicatorAnimationDuration?: number
 }
 
 const { width: windowWidth } = Dimensions.get('window')
@@ -31,6 +30,7 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
     isLastInGroup,
     isFirstInGroup,
     backgroundColor,
+    typingIndicator,
     isLatestSetEntry,
     avatarImageSource,
     alignment = 'left',
@@ -39,10 +39,8 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
     isInMiddleOfTheGroup,
     contentContainerStyles,
     showTypingIndicator = false,
-    typingIndicatorAnimationTimeMs = 500,
-    typingIndicatorAnimation = require('../helpers/lottie-typing-indicator.json'),
+    typingIndicatorAnimationDuration = 500,
   } = props
-  const lottieRef = useRef<LottieView>(null)
 
   const [size, setSize] = useState({ width: 0, height: 0 })
 
@@ -57,15 +55,11 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
         avatarScale.value = 1
       }
 
-      if (showTypingIndicator && lottieRef.current && isLatestSetEntry && alignment === 'left') {
-        lottieRef.current.play()
+      if (showTypingIndicator && isLatestSetEntry && alignment === 'left') {
         animateBubbleIntro.value = 1
         setTimeout(() => {
-          if (lottieRef.current) {
-            lottieRef.current.pause()
-            animateBubble.value = 1
-          }
-        }, typingIndicatorAnimationTimeMs)
+          animateBubble.value = 1
+        }, typingIndicatorAnimationDuration)
       } else if (!showTypingIndicator && isLatestSetEntry && alignment === 'right') {
         animateBubbleIntro.value = 1
         animateBubble.value = 1
@@ -124,7 +118,7 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
     }
   }, [isLatestSetEntry])
 
-  const animatedLottieStyles = useAnimatedStyle(() => {
+  const animatedTypingIndicatorContainerStyles = useAnimatedStyle(() => {
     return {
       opacity: isLatestSetEntry ? withSpring(Number(!animateBubble.value), DEFAULT_SPRING_CONFIG) : 0,
     }
@@ -226,14 +220,10 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
             bubbleWrapperStyles,
           ]}>
           {alignment === 'left' && (
-            <Animated.View style={[styles.lottieContainer, animatedLottieStyles]} pointerEvents="none">
-              <LottieView
-                ref={lottieRef}
-                loop
-                speed={-0.85}
-                style={styles.lottieView}
-                source={typingIndicatorAnimation}
-              />
+            <Animated.View
+              style={[styles.typingIndicatorContainer, animatedTypingIndicatorContainerStyles]}
+              pointerEvents="none">
+              <>{typingIndicator}</>
             </Animated.View>
           )}
           <Animated.View
@@ -282,18 +272,13 @@ const styles = StyleSheet.create({
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 4 },
   },
-  lottieContainer: {
+  typingIndicatorContainer: {
     top: 0,
     left: 0,
     width: 80,
     height: 35,
     position: 'absolute',
     transform: [{ scaleX: -1 }],
-  },
-  lottieView: {
-    width: 120,
-    height: 60,
-    transform: [{ translateY: -7 }, { translateX: -9 }],
   },
   row: {
     flexDirection: 'row',

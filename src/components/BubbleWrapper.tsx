@@ -1,6 +1,12 @@
+import Animated, {
+  withDelay,
+  withSpring,
+  AnimatedStyle,
+  useSharedValue,
+  useAnimatedStyle,
+} from 'react-native-reanimated'
 import React, { PropsWithChildren, ReactNode, useEffect, useState } from 'react'
-import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from 'react-native-reanimated'
-import { Image, ImageSourcePropType, View, StyleSheet, LayoutChangeEvent, Dimensions, ViewStyle } from 'react-native'
+import { Image, ImageSourcePropType, StyleSheet, LayoutChangeEvent, Dimensions, ViewStyle } from 'react-native'
 
 import type { ComponentExtraProps } from '../types'
 
@@ -13,11 +19,11 @@ interface ChatbotBubbleWrapperPropsType {
   typingIndicator?: ReactNode
   alignment?: 'left' | 'right'
   showTypingIndicator?: boolean
-  bubbleWrapperStyles?: ViewStyle
-  contentWrapperStyles?: ViewStyle
-  contentContainerStyles?: ViewStyle
   avatarImageSource: ImageSourcePropType
   typingIndicatorAnimationDuration?: number
+  bubbleWrapperStyles?: AnimatedStyle<ViewStyle>
+  contentWrapperStyles?: AnimatedStyle<ViewStyle>
+  contentContainerStyles?: AnimatedStyle<ViewStyle>
 }
 
 const { width: windowWidth } = Dimensions.get('window')
@@ -190,9 +196,9 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
           )}
           <Animated.View style={[borderStyles, bubbleStyles, styles.extraBubbleStyles]}>
             <Animated.View style={styles.staticContainer}>
-              <View style={styles.container} onLayout={onBubbleContentLayout}>
+              <Animated.View style={styles.container} onLayout={onBubbleContentLayout}>
                 {children}
-              </View>
+              </Animated.View>
             </Animated.View>
           </Animated.View>
         </Animated.View>
@@ -233,9 +239,9 @@ const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> &
               animatedTextBubbleStyles,
               contentWrapperStyles,
             ]}>
-            <View style={[styles.container, contentContainerStyles]} onLayout={onBubbleContentLayout}>
+            <Animated.View style={[styles.container, contentContainerStyles]} onLayout={onBubbleContentLayout}>
               {children}
-            </View>
+            </Animated.View>
           </Animated.View>
         </Animated.View>
       </Animated.View>

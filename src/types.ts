@@ -2,13 +2,13 @@ export interface DefaultEntryPropsType {
   componentType: string
 }
 
-export interface ComponentExtraProps {
-  isInMiddleOfTheGroup?: boolean
+export interface ComponentExtraPropsType {
+  isLast?: boolean
   isLastInGroup?: boolean
   isFirstInGroup?: boolean
-  isLast?: boolean
   isLatestSetEntry?: boolean
   isLastEntryRendered?: boolean
+  isInMiddleOfTheGroup?: boolean
   isLatestPersistedEntry?: boolean | null
 }
 
@@ -21,17 +21,18 @@ export interface DefaultEntryMethodsType<K extends Record<keyof K, K[keyof K]>> 
         isLatestSetEntry,
         isLatestPersistedEntry,
       }: {
-        addAction: <T extends keyof K, V extends K[T]>(actionKey: T, props: V) => void
         closeAction: () => void
-        setNewEntry: (entryKey: string | Record<string, unknown>) => void
         isLatestSetEntry: boolean
-        isLatestPersistedEntry: boolean
         isLastEntryRendered: boolean
+        isLatestPersistedEntry: boolean
+        sleepBeforeNextEntry: (duration?: number) => void
+        setNewEntry: (entryKey: string | Record<string, unknown>) => void
+        addAction: <T extends keyof K, V extends K[T]>(actionKey: T, props: V) => void
       }) => void)
     | undefined
 }
 
-export interface DefaultEntryMethodsTypeInternal {
+export interface InternalDefaultEntryMethodsType {
   onRender?:
     | (({
         addAction,
@@ -40,12 +41,12 @@ export interface DefaultEntryMethodsTypeInternal {
         isLatestSetEntry,
         isLatestPersistedEntry,
       }: {
-        addAction: (actionKey: string, props: unknown) => void | undefined
         closeAction: () => void
-        setNewEntry: (entryKey: string | Record<string, unknown>) => void
         isLatestSetEntry: boolean
-        isLatestPersistedEntry: boolean
         isLastEntryRendered: boolean
+        isLatestPersistedEntry: boolean
+        setNewEntry: (entryKey: string | Record<string, unknown>) => void
+        addAction: (actionKey: string, props: unknown) => void | undefined
       }) => void)
     | undefined
 }

@@ -3,7 +3,7 @@ import { View, StyleProp, ViewStyle, Platform } from 'react-native'
 import React, { memo, useCallback, useEffect, useState } from 'react'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 
-import type { DefaultEntryMethodsTypeInternal } from './types'
+import type { InternalDefaultEntryMethodsType } from './types'
 
 import EntryWrapper from './components/EntryWrapper'
 import ActionWrapper from './components/ActionWrapper'
@@ -32,13 +32,13 @@ interface ChatbotPropsType<K, T> {
  * inverted FlatList on Android 13.
  * @see https://github.com/facebook/react-native/issues/34583
  */
-export const USE_INVERTED_FLATLIST = !(Platform.OS === 'android' && Platform.Version >= 33)
+export const USE_INVERTED_FLAT_LIST = !(Platform.OS === 'android' && Platform.Version >= 33)
 
 const Chatbot = <
   K extends Record<
     string,
     Record<string, unknown> &
-      DefaultEntryMethodsTypeInternal & {
+      InternalDefaultEntryMethodsType & {
         componentType: string
       }
   >,
@@ -119,11 +119,11 @@ const Chatbot = <
     <View style={{ flex: 1 }}>
       <AnimatedFlatList
         data={chatbotHistory}
-        inverted={USE_INVERTED_FLATLIST}
+        inverted={USE_INVERTED_FLAT_LIST}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={contentContainerStyle}
-        style={[{ flex: 1 }, animatedPadding, !USE_INVERTED_FLATLIST && { transform: [{ rotate: '180deg' }] }]}
+        style={[{ flex: 1 }, animatedPadding, !USE_INVERTED_FLAT_LIST && { transform: [{ rotate: '180deg' }] }]}
         keyExtractor={(item, index): string => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
@@ -135,9 +135,7 @@ const Chatbot = <
           const isKey = typeof item === 'string'
           const entry = isKey ? entries[item] : item
 
-          if (!entry) {
-            throw new Error(`There is no entry with a key ${item}`)
-          }
+          if (!entry) throw new Error(`There is no entry with a key ${item}`)
 
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
@@ -162,19 +160,19 @@ const Chatbot = <
           return (
             <EntryWrapper
               entry={entry}
-              setActiveAction={addActiveAction}
               isLast={isLast}
-              isLatestSetEntry={isLatestSetEntry}
-              isLatestPersistedEntry={latestPersistedEntry === item}
-              setNewEntry={addNewEntryToHistory}
+              setActiveAction={addActiveAction}
               removeAction={removeActiveAction}
+              setNewEntry={addNewEntryToHistory}
               isLastInGroup={!isSameAsNextEntry}
-              isInMiddleOfTheGroup={!!isSameAsPreviousEntry && !!isSameAsNextEntry}
+              isLatestSetEntry={isLatestSetEntry}
               isFirstInGroup={!isSameAsPreviousEntry}
+              isLatestPersistedEntry={latestPersistedEntry === item}
+              isInMiddleOfTheGroup={!!isSameAsPreviousEntry && !!isSameAsNextEntry}
               isLastEntryRendered={isLatestSetEntry || latestPersistedEntry === item}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
-              onRender={entry.onRender as DefaultEntryMethodsTypeInternal['onRender']}>
+              onRender={entry.onRender as InternalDefaultEntryMethodsType['onRender']}>
               {EntryComponent ? <EntryComponent /> : undefined}
             </EntryWrapper>
           )
@@ -183,9 +181,9 @@ const Chatbot = <
 
       {activeAction && (
         <ActionWrapper
+          springConfig={springConfig}
           componentKey={activeAction.key}
           componentProps={activeAction.props}
-          springConfig={springConfig}
           onHeight={onActionHeight}>
           {ActionComponent ? <ActionComponent /> : undefined}
         </ActionWrapper>

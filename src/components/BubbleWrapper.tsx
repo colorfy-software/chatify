@@ -8,7 +8,7 @@ import Animated, {
 import React, { PropsWithChildren, ReactNode, useEffect, useState } from 'react'
 import { Image, ImageSourcePropType, StyleSheet, LayoutChangeEvent, Dimensions, ViewStyle } from 'react-native'
 
-import type { ComponentExtraProps } from '../types'
+import type { ComponentExtraPropsType } from '../types'
 
 import { DEFAULT_SPRING_CONFIG } from '../helpers'
 
@@ -28,7 +28,9 @@ interface ChatbotBubbleWrapperPropsType {
 
 const { width: windowWidth } = Dimensions.get('window')
 
-const BubbleWrapper = (props: PropsWithChildren<ChatbotBubbleWrapperPropsType> & ComponentExtraProps): JSX.Element => {
+const BubbleWrapper = (
+  props: PropsWithChildren<ChatbotBubbleWrapperPropsType> & ComponentExtraPropsType,
+): JSX.Element => {
   const {
     testID,
     children,

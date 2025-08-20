@@ -1,17 +1,19 @@
 import { View } from 'react-native'
 import React, { cloneElement, createElement, memo, ReactElement, Component, useEffect } from 'react'
 
-import type { ComponentExtraProps, DefaultEntryMethodsTypeInternal } from '../types'
+import type { ComponentExtraPropsType, InternalDefaultEntryMethodsType } from '../types'
 
-import { USE_INVERTED_FLATLIST } from '../index'
+import { USE_INVERTED_FLAT_LIST } from '../index'
+
+type OnRenderArgumentsType = Parameters<NonNullable<InternalDefaultEntryMethodsType['onRender']>>[0]
 
 interface EntryWrapperType<T> {
   entry: T
   testID?: string
-  onRender?: DefaultEntryMethodsTypeInternal['onRender']
-  setNewEntry: (entry: string | Record<string, unknown>) => void
+  setNewEntry: OnRenderArgumentsType['setNewEntry']
+  removeAction: OnRenderArgumentsType['closeAction']
+  onRender?: InternalDefaultEntryMethodsType['onRender']
   setActiveAction: ({ key, actionProps }: { key: string; actionProps: Record<string, unknown> }) => void
-  removeAction: () => void
   children:
     | ReactElement<
         T,
@@ -28,22 +30,22 @@ interface EntryWrapperType<T> {
 }
 
 const EntryWrapper = <T extends Record<string, unknown>>(
-  props: EntryWrapperType<T> & Required<ComponentExtraProps>,
+  props: EntryWrapperType<T> & Required<ComponentExtraPropsType>,
 ): JSX.Element => {
   const {
-    children,
-    testID,
     entry,
-    onRender,
-    setActiveAction,
-    isLatestSetEntry,
+    testID,
     isLast,
+    children,
+    onRender,
     setNewEntry,
     removeAction,
-    isLatestPersistedEntry,
-    isInMiddleOfTheGroup,
     isLastInGroup,
     isFirstInGroup,
+    setActiveAction,
+    isLatestSetEntry,
+    isInMiddleOfTheGroup,
+    isLatestPersistedEntry,
   } = props
 
   useEffect(() => {
@@ -68,17 +70,17 @@ const EntryWrapper = <T extends Record<string, unknown>>(
   }, [])
 
   return (
-    <View testID={testID} style={[!USE_INVERTED_FLATLIST && { transform: [{ rotate: '180deg' }] }]}>
+    <View testID={testID} style={[!USE_INVERTED_FLAT_LIST && { transform: [{ rotate: '180deg' }] }]}>
       {children
         ? cloneElement(children, {
             ...entry,
-            isInMiddleOfTheGroup,
-            isLastInGroup,
-            isFirstInGroup,
             isLast,
-            isLatestSetEntry,
-            isLatestPersistedEntry,
+            isLastInGroup,
             key: entry.id,
+            isFirstInGroup,
+            isLatestSetEntry,
+            isInMiddleOfTheGroup,
+            isLatestPersistedEntry,
           })
         : createElement(View)}
     </View>

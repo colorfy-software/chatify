@@ -13,6 +13,7 @@ interface EntryWrapperType<T> {
   setNewEntry: OnRenderArgumentsType['setNewEntry']
   removeAction: OnRenderArgumentsType['closeAction']
   onRender?: InternalDefaultEntryMethodsType['onRender']
+  sleepBeforeNextEntry: OnRenderArgumentsType['sleepBeforeNextEntry']
   setActiveAction: ({ key, actionProps }: { key: string; actionProps: Record<string, unknown> }) => void
   children:
     | ReactElement<
@@ -44,27 +45,31 @@ const EntryWrapper = <T extends Record<string, unknown>>(
     isFirstInGroup,
     setActiveAction,
     isLatestSetEntry,
+    sleepBeforeNextEntry,
     isInMiddleOfTheGroup,
     isLatestPersistedEntry,
   } = props
 
   useEffect(() => {
-    onRender &&
-      isLast &&
-      onRender({
-        addAction: (key, passedProps): void => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          setActiveAction({ key, actionProps: passedProps })
-        },
-        closeAction: (): void => removeAction(),
-        setNewEntry: (key): void => setNewEntry(key),
-        // NOTE: This comes from setting a new entry from another entry.
-        isLatestSetEntry,
-        // NOTE: This comes from after restarting the app/chatbot and getting the latest persisted history.
-        isLatestPersistedEntry: Boolean(isLatestPersistedEntry),
-        isLatestRenderedEntry: isLatestSetEntry || Boolean(isLatestPersistedEntry),
-      })
+    const triggerOnRender = async () => {
+      if (onRender && isLast) {
+        await onRender({
+          // NOTE: This comes from setting a new entry from another entry.
+          isLatestSetEntry,
+          sleepBeforeNextEntry,
+          closeAction: () => removeAction(),
+          setNewEntry: key => setNewEntry(key),
+          // NOTE: This comes from after restarting the app/chatbot and getting the latest persisted history.
+          isLatestPersistedEntry: Boolean(isLatestPersistedEntry),
+          isLatestRenderedEntry: isLatestSetEntry || Boolean(isLatestPersistedEntry),
+          addAction: (key, passedProps) => {
+            setActiveAction({ key, actionProps: passedProps as Record<string, unknown> })
+          },
+        })
+      }
+    }
+
+    triggerOnRender()
     // NOTE: We voluntarily omitted the dependency array content as we want to run this only once.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

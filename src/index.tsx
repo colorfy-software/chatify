@@ -1,6 +1,6 @@
 import { FlatList } from 'react-native-gesture-handler'
 import { View, StyleProp, ViewStyle, Platform } from 'react-native'
-import React, { memo, useCallback, useEffect, useState } from 'react'
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 
 import type { InternalDefaultEntryMethodsType } from './types'
@@ -8,7 +8,7 @@ import type { InternalDefaultEntryMethodsType } from './types'
 import EntryWrapper from './components/EntryWrapper'
 import ActionWrapper from './components/ActionWrapper'
 
-import { DEFAULT_SPRING_CONFIG } from './helpers'
+import { DEFAULT_SPRING_CONFIG, sleep } from './helpers'
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
 
@@ -17,6 +17,7 @@ interface ChatbotPropsType<K, T> {
   components: T
   initEntry: keyof K
   initAction?: keyof T | undefined
+  exitEntriesKeys?: Array<keyof K>
   springConfig?: typeof DEFAULT_SPRING_CONFIG
   chatbotHistory: (string | Record<string, unknown>)[]
   contentContainerStyle?: StyleProp<ViewStyle> | undefined
@@ -49,6 +50,7 @@ const Chatbot = <
   refMethods,
   components,
   chatbotHistory,
+  exitEntriesKeys,
   setChatbotHistory,
   onEntryWillUpdate,
   contentContainerStyle,
@@ -58,18 +60,51 @@ const Chatbot = <
     key: string
     props: Record<string, unknown>
   }>(null)
-  const [latestPersistedEntry, setLatestPersistedEntry] = useState<string | Record<string, unknown> | null | -1>(null)
-  const [actionHeight, setActionHeight] = useState<number>(0)
+  const isRenderingEntry = useRef(false)
   const hasHistory = !!chatbotHistory.length
+  const wasAnyExitKeyNotRenderedYet = useRef(true)
+  const [actionHeight, setActionHeight] = useState<number>(0)
+  const entryQueue = useRef<Array<keyof K | Record<string, unknown>>>([])
+  const [latestPersistedEntry, setLatestPersistedEntry] = useState<string | Record<string, unknown> | null | -1>(null)
+
+  const processEntryQueue = useCallback(() => {
+    if (isRenderingEntry.current) return // NOTE: Already rendering a message
+    if (entryQueue.current.length === 0) return // NOTE: No entry to process
+
+    isRenderingEntry.current = true
+    const key: keyof K | Record<string, unknown> | undefined = entryQueue.current.shift()
+
+    if (key) {
+      onEntryWillUpdate?.(key)
+      setChatbotHistory(key)
+    }
+  }, [onEntryWillUpdate, setChatbotHistory])
 
   const addNewEntryToHistory = useCallback(
     (key: keyof K | Record<string, unknown>) => {
-      onEntryWillUpdate && onEntryWillUpdate(key)
+      const isNewEntryKeyNotAlreadyInQueue = !entryQueue.current.includes(key)
 
-      setChatbotHistory(key)
+      if (isNewEntryKeyNotAlreadyInQueue && wasAnyExitKeyNotRenderedYet.current) {
+        entryQueue.current.push(key)
+        processEntryQueue()
+      }
+
+      if (
+        exitEntriesKeys?.includes(
+          typeof key === 'string' ? key : (key as { key: string }).key ?? (key as { testID: string }).testID,
+        )
+      ) {
+        wasAnyExitKeyNotRenderedYet.current = false
+      }
     },
-    [onEntryWillUpdate, setChatbotHistory],
+    [exitEntriesKeys, processEntryQueue],
   )
+
+  const sleepBeforeNextEntry = async (duration = 1) => {
+    await sleep(duration)
+    isRenderingEntry.current = false
+    processEntryQueue()
+  }
 
   const removeActiveAction = useCallback(() => {
     setActiveAction(null)
@@ -167,6 +202,7 @@ const Chatbot = <
               isLastInGroup={!isSameAsNextEntry}
               isLatestSetEntry={isLatestSetEntry}
               isFirstInGroup={!isSameAsPreviousEntry}
+              sleepBeforeNextEntry={sleepBeforeNextEntry}
               isLatestPersistedEntry={latestPersistedEntry === item}
               isInMiddleOfTheGroup={!!isSameAsPreviousEntry && !!isSameAsNextEntry}
               isLatestRenderedEntry={isLatestSetEntry || latestPersistedEntry === item}

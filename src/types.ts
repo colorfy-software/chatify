@@ -19,6 +19,7 @@ export interface DefaultEntryMethodsType<K extends Record<keyof K, K[keyof K]>> 
         closeAction,
         setNewEntry,
         isLatestSetEntry,
+        sleepBeforeNextEntry,
         isLatestPersistedEntry,
       }: {
         closeAction: () => void
@@ -39,12 +40,14 @@ export interface InternalDefaultEntryMethodsType {
         closeAction,
         setNewEntry,
         isLatestSetEntry,
+        sleepBeforeNextEntry,
         isLatestPersistedEntry,
       }: {
         closeAction: () => void
         isLatestSetEntry: boolean
         isLatestRenderedEntry: boolean
         isLatestPersistedEntry: boolean
+        sleepBeforeNextEntry: (duration?: number) => void
         setNewEntry: (entryKey: string | Record<string, unknown>) => void
         addAction: (actionKey: string, props: unknown) => void | undefined
       }) => void)

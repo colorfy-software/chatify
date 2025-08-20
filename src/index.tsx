@@ -169,7 +169,7 @@ const Chatbot = <
               isFirstInGroup={!isSameAsPreviousEntry}
               isLatestPersistedEntry={latestPersistedEntry === item}
               isInMiddleOfTheGroup={!!isSameAsPreviousEntry && !!isSameAsNextEntry}
-              isLastEntryRendered={isLatestSetEntry || latestPersistedEntry === item}
+              isLatestRenderedEntry={isLatestSetEntry || latestPersistedEntry === item}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               onRender={entry.onRender as InternalDefaultEntryMethodsType['onRender']}>

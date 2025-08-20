@@ -7,8 +7,8 @@ export interface ComponentExtraPropsType {
   isLastInGroup?: boolean
   isFirstInGroup?: boolean
   isLatestSetEntry?: boolean
-  isLastEntryRendered?: boolean
   isInMiddleOfTheGroup?: boolean
+  isLatestRenderedEntry?: boolean
   isLatestPersistedEntry?: boolean | null
 }
 
@@ -23,7 +23,7 @@ export interface DefaultEntryMethodsType<K extends Record<keyof K, K[keyof K]>> 
       }: {
         closeAction: () => void
         isLatestSetEntry: boolean
-        isLastEntryRendered: boolean
+        isLatestRenderedEntry: boolean
         isLatestPersistedEntry: boolean
         sleepBeforeNextEntry: (duration?: number) => void
         setNewEntry: (entryKey: string | Record<string, unknown>) => void
@@ -43,7 +43,7 @@ export interface InternalDefaultEntryMethodsType {
       }: {
         closeAction: () => void
         isLatestSetEntry: boolean
-        isLastEntryRendered: boolean
+        isLatestRenderedEntry: boolean
         isLatestPersistedEntry: boolean
         setNewEntry: (entryKey: string | Record<string, unknown>) => void
         addAction: (actionKey: string, props: unknown) => void | undefined

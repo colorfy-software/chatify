@@ -63,7 +63,7 @@ const EntryWrapper = <T extends Record<string, unknown>>(
         isLatestSetEntry,
         // NOTE: This comes from after restarting the app/chatbot and getting the latest persisted history.
         isLatestPersistedEntry: Boolean(isLatestPersistedEntry),
-        isLastEntryRendered: isLatestSetEntry || Boolean(isLatestPersistedEntry),
+        isLatestRenderedEntry: isLatestSetEntry || Boolean(isLatestPersistedEntry),
       })
     // NOTE: We voluntarily omitted the dependency array content as we want to run this only once.
     // eslint-disable-next-line react-hooks/exhaustive-deps

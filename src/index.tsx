@@ -21,9 +21,13 @@ interface ChatbotPropsType<K, T> {
   springConfig?: typeof DEFAULT_SPRING_CONFIG
   chatbotHistory: (string | Record<string, unknown>)[]
   contentContainerStyle?: StyleProp<ViewStyle> | undefined
-  refMethods?: (methods: { removeActiveAction: () => void }) => void
   setChatbotHistory: (newHistoryKey: keyof K | Record<string, unknown>) => void
   onEntryWillUpdate?: ((nextEntryKey: keyof K | Record<string, unknown>) => void | Promise<void>) | undefined
+  refMethods?: (methods: {
+    removeActiveAction: () => void
+    sleepBeforeNextEntry: () => void
+    addNewEntryToHistory: (key: keyof K | Record<string, unknown>) => void
+  }) => void
 }
 
 /**
@@ -136,7 +140,7 @@ const Chatbot = <
     const latestEntry = chatbotHistory.length ? chatbotHistory[0] : -1
     if (!latestPersistedEntry && latestEntry) setLatestPersistedEntry(latestEntry)
 
-    refMethods?.({ removeActiveAction })
+    refMethods?.({ addNewEntryToHistory, removeActiveAction, sleepBeforeNextEntry })
 
     // NOTE: We voluntarily omitted the dependency array content as we want to run this only once.
     // eslint-disable-next-line react-hooks/exhaustive-deps
